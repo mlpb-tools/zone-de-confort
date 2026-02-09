@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LS4YOU - S'Affirmer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ls-red: #E63946;
+            --ls-yellow: #FFB703;
+            --ls-turquoise: #2EC4B6;
+            --ls-pink: #FF99AC;
+            --ls-dark: #1D3557;
+            --ls-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--ls-white);
+            color: var(--ls-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 900; }
+
+        .dot-grid {
+            background-image: radial-gradient(var(--ls-dark) 1.5px, transparent 1.5px);
+            background-size: 20px 20px;
+            opacity: 0.05;
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+        }
+
+        .btn-choice {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #F1F5F9;
+            text-align: left;
+        }
+        .btn-choice:hover {
+            transform: scale(1.02);
+            border-color: var(--ls-turquoise);
+            background-color: #F8FAFC;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #F1F5F9;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--ls-turquoise);
+            transition: width 0.5s ease;
+        }
+
+        .puzzle-svg {
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            fill: var(--ls-turquoise);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .result-card-detail {
+            border-left: 4px solid var(--ls-turquoise);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="p-4 lg:p-8">
+
+    <div class="dot-grid"></div>
+
+    <header class="max-w-4xl mx-auto w-full flex justify-between items-center mb-10 no-print">
+        <div class="flex items-center gap-4">
+            <img src="https://www.lifeskills4youth.eu/wp-content/uploads/2024/07/LS4YOU_Logo_whiteback.jpg" alt="Logo LS4YOU" class="h-8">
+            <div class="h-6 w-[2px] bg-slate-200"></div>
+            <h1 class="text-lg uppercase tracking-tighter leading-none"><span class="text-[var(--ls-red)]">S'Affirmer</span></h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Atelier Mission Locale</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" alt="UE" class="h-4">
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto w-full flex-grow flex flex-col justify-center relative">
+        <svg class="puzzle-svg" viewBox="0 0 24 24"><path d="M18.88 12.17c.56 0 1.12-.13 1.62-.4.43-.22.8-.52 1.1-.9.3-.37.52-.8.65-1.27.13-.47.15-.96.06-1.44-.1-.48-.3-.93-.6-1.33-.3-.4-.68-.72-1.13-.95-.45-.23-.94-.35-1.44-.35-.5 0-.99.12-1.44.35-.45.23-.83.55-1.13.95s-.5 0.85-.6 1.33c-0.09 0.48-0.07 0.97 0.06 1.44s0.35 0.9 0.65 1.27c0.3 0.38 0.67 0.68 1.1 0.9s1.06 0.4 1.62 0.4zM5 14h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h-2v-2h-2V8h-2V6h-2V4h-2v2H9v2H7v2H5v2H3v2h2z" /></svg>
+
+        <!-- Écran de début -->
+        <div id="start-screen" class="text-center animate-pop">
+            <div class="w-24 h-24 bg-[var(--ls-turquoise)]/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                <i data-lucide="message-circle" class="text-[var(--ls-turquoise)] w-12 h-12"></i>
+            </div>
+            <h2 class="text-4xl lg:text-6xl uppercase mb-6 leading-tight">S'Affirmer</h2>
+            <p class="text-slate-500 mb-12 text-lg leading-relaxed">
+                Au travail ou avec tes potes, il y a trois façons de dire les choses. Es-tu plutôt discret, cash ou posé ?<br>Réponds à ces 10 situations pour voir ton profil.
+            </p>
+            <!-- Bouton Rouge bien visible -->
+            <button onclick="startQuiz()" class="bg-[var(--ls-red)] text-white px-12 py-5 rounded-full font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-red-200">
+                Lancer le test
+            </button>
+        </div>
+
+        <!-- Questionnaire -->
+        <div id="quiz-screen" class="hidden">
+            <div class="mb-10">
+                <div class="flex justify-between items-end mb-3">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Situation <span id="current-step">1</span> sur 10</span>
+                    <span id="category-tag" class="px-4 py-1 bg-[var(--ls-yellow)] text-[9px] font-black uppercase rounded-full">Mission Locale</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 lg:p-10 rounded-[40px] shadow-sm border border-slate-100 mb-8">
+                <h3 id="question-text" class="text-xl lg:text-2xl mb-10 leading-tight text-slate-800">Situation...</h3>
+                <div id="choices-container" class="space-y-4">
+                    <!-- Boutons injectés ici -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de Résultats -->
+        <div id="result-screen" class="hidden animate-pop text-center">
+            <div id="result-icon" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg"></div>
+            <h2 class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Ton attitude dominante</h2>
+            <h3 id="result-title" class="text-4xl uppercase mb-8">Style...</h3>
+            
+            <div id="result-details" class="bg-slate-50 p-8 lg:p-10 rounded-[40px] text-sm lg:text-base leading-relaxed text-slate-600 mb-12 text-left border-2 border-slate-100">
+                <!-- Détails injectés ici -->
+            </div>
+
+            <div class="flex flex-wrap gap-4 justify-center no-print">
+                <button onclick="window.print()" class="px-8 py-4 border-2 border-slate-200 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Sauvegarder ma fiche
+                </button>
+                <button onclick="location.reload()" class="px-10 py-4 bg-[var(--ls-dark)] text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-[var(--ls-red)] transition-all">
+                    Recommencer
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-4xl mx-auto w-full py-10 mt-auto border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4 opacity-50 no-print">
+        <p class="text-[9px] font-bold uppercase tracking-[0.2em]">© 2026 LS4YOU • Life Skills for Youth</p>
+        <div class="flex gap-4">
+            <div class="w-2 h-2 rounded-full bg-[var(--ls-red)]"></div>
+            <div class="w-2 h-2 rounded-full bg-[var(--ls-yellow)]"></div>
+            <div class="w-2 h-2 rounded-full bg-[var(--ls-turquoise)]"></div>
+        </div>
+    </footer>
+
+    <script>
+        const QUESTIONS = [
+            {
+                tag: "Amis & Priorités",
+                q: "Ton conseiller te propose un atelier CV demain matin. Un ami t'appelle car il a besoin que tu l'accompagnes faire une course au même moment.",
+                choices: [
+                    { text: "Tu acceptes d'aider ton ami et tu décales ton atelier, même si c'est important pour ton projet.", type: "P" },
+                    { text: "Tu t'énerves contre ton ami : « Tu abuses, tu sais bien que j'ai mes trucs à la Mission Locale ! »", type: "A" },
+                    { text: "« Désolé, j'ai déjà un atelier de prévu demain matin. On peut se voir dans l'après-midi ? »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Gêne en groupe",
+                q: "Pendant un atelier en groupe, un autre participant utilise son téléphone avec le son, ce qui t'empêche de bien suivre les consignes.",
+                choices: [
+                    { text: "Tu ne dis rien pour ne pas créer d'embrouille, mais tu n'arrives plus à écouter.", type: "P" },
+                    { text: "Tu lui lances un regard noir : « Éteins ton truc là, on n'est pas chez toi ! »", type: "A" },
+                    { text: "« Est-ce que tu pourrais mettre ton téléphone en silencieux s'il te plaît ? J'ai du mal à entendre. »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Horaires en Stage",
+                q: "Tu es en stage. Ton tuteur te demande de rester une heure de plus ce soir alors que tu as ton dernier bus à ne pas rater.",
+                choices: [
+                    { text: "Tu acceptes sans rien dire et tu te débrouilleras pour rentrer comme tu peux, même si c'est la galère.", type: "P" },
+                    { text: "« C'est pas possible, vous auriez pu prévenir avant, c'est pas sympa de demander ça au dernier moment ! »", type: "A" },
+                    { text: "« J'aimerais bien aider, mais je ne peux pas rater mon dernier bus. On peut finir cela demain matin ? »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Critique des proches",
+                q: "Un pote critique ton projet : « Pourquoi tu t'embêtes avec ces formations ? Ça sert à rien, reste tranquille avec nous. »",
+                choices: [
+                    { text: "Tu doutes de toi et tu te dis qu'il a peut-être raison, tu perds ta motivation.", type: "P" },
+                    { text: "« Tu ne comprends rien à ma vie, occupe-toi de tes affaires et laisse-moi ! »", type: "A" },
+                    { text: "« Je comprends que tu penses ça, mais ce projet est important pour moi et je veux essayer d'aller au bout. »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Questions gênantes",
+                q: "Pendant un forum emploi, un recruteur te demande pourquoi tu n'as rien fait l'année dernière d'une façon qui te met mal à l'aise.",
+                choices: [
+                    { text: "Tu bafouilles, tu t'excuses et tu as l'impression d'être nul pour le reste de la journée.", type: "P" },
+                    { text: "Tu te braques : « C'est personnel, ça n'a rien à voir avec le boulot que je demande. »", type: "A" },
+                    { text: "« J'ai dû gérer des priorités personnelles pendant cette période. Aujourd'hui, je suis 100% prêt pour ce poste. »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Remarque sur le retard",
+                q: "Tu arrives en retard à ton rendez-vous car ton train a eu un problème. Ton conseiller te fait une remarque sur l'heure.",
+                choices: [
+                    { text: "Tu baisses la tête et tu t'excuses dix fois, même si ce n'est pas ta faute.", type: "P" },
+                    { text: "« C'est pas ma faute, c'est les trains ! C'est déjà bien que je sois venu non ? »", type: "A" },
+                    { text: "« Je suis désolé pour ce retard. Mon train a été annulé, j'ai essayé d'arriver au plus vite. »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Effort physique",
+                q: "En stage, un collègue te demande de porter des cartons lourds alors que tu as mal au dos aujourd'hui.",
+                choices: [
+                    { text: "Tu les portes quand même pour ne pas passer pour un 'fainéant', même si tu as mal.", type: "P" },
+                    { text: "« Tu vois pas que je galère ? Demande à quelqu'un d'autre au lieu de me saouler ! »", type: "A" },
+                    { text: "« J'ai un souci au dos aujourd'hui. Je peux t'aider sur un autre truc qui ne demande pas de porter du lourd ? »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Désaccord sur le CV",
+                q: "Ton conseiller te suggère de changer tout ton CV car il ne le trouve pas clair. Tu as passé 3 heures dessus.",
+                choices: [
+                    { text: "Tu dis 'Oui' mais tu ne le fais pas car tu es vexé et tu penses qu'il a tort.", type: "P" },
+                    { text: "« Vous n'aimez jamais rien, j'ai passé trop de temps dessus, je ne change plus rien ! »", type: "A" },
+                    { text: "« Je n'avais pas vu les choses comme ça. Quels sont les points précis que je devrais améliorer ? »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Numéro de téléphone",
+                q: "Un autre jeune que tu ne connais pas bien te demande ton numéro avec insistance alors que tu n'as pas envie.",
+                choices: [
+                    { text: "Tu lui donnes pour qu'il te laisse tranquille, mais tu prévois de le bloquer direct.", type: "P" },
+                    { text: "« Laisse-moi tranquille, t'es lourd à la fin, on se connaît pas ! »", type: "A" },
+                    { text: "« Je préfère ne pas donner mon numéro perso, mais on peut discuter ici quand on se croise. »", type: "LS" }
+                ]
+            },
+            {
+                tag: "Choix difficile",
+                q: "On te propose un petit boulot de 2 jours, mais ça tombe pendant ton examen ou ta formation importante.",
+                choices: [
+                    { text: "Tu acceptes le boulot pour l'argent, même si ça casse tes chances de réussir ta formation.", type: "P" },
+                    { text: "« C'est toujours pareil, les propositions arrivent au mauvais moment ! C'est n'importe quoi ! »", type: "A" },
+                    { text: "« C'est une super offre, mais je suis en formation ces jours-là. On peut retravailler ensemble plus tard ? »", type: "LS" }
+                ]
+            }
+        ];
+
+        let currentStep = 0;
+        let scores = { P: 0, A: 0, LS: 0 };
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = QUESTIONS[currentStep];
+            document.getElementById('current-step').innerText = currentStep + 1;
+            document.getElementById('category-tag').innerText = q.tag;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-fill').style.width = ((currentStep + 1) / 10 * 100) + '%';
+
+            const container = document.getElementById('choices-container');
+            container.innerHTML = '';
+            
+            q.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = "w-full btn-choice p-5 rounded-2xl text-sm lg:text-base font-medium flex items-center gap-4 group";
+                btn.innerHTML = `
+                    <div class="w-6 h-6 rounded-full border-2 border-slate-200 flex-shrink-0 group-hover:border-[var(--ls-turquoise)] transition-all"></div>
+                    <span>${choice.text}</span>
+                `;
+                btn.onclick = () => handleChoice(choice.type);
+                container.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function handleChoice(type) {
+            scores[type]++;
+            currentStep++;
+            if (currentStep < QUESTIONS.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const dominant = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const iconEl = document.getElementById('result-icon');
+            const titleEl = document.getElementById('result-title');
+            const detailsEl = document.getElementById('result-details');
+
+            if (dominant === 'P') {
+                iconEl.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg bg-[var(--ls-yellow)] text-white";
+                iconEl.innerHTML = '<i data-lucide="user-minus" class="w-12 h-12"></i>';
+                titleEl.innerText = "Style Discret";
+                detailsEl.innerHTML = `
+                    <div class="result-card-detail" style="border-color: var(--ls-yellow)">
+                        <p class="font-bold text-[var(--ls-yellow)] uppercase text-xs mb-1">Ton Attitude</p>
+                        <p>Tu cherches à faire plaisir et tu évites les tensions à tout prix, même quand ça t'embête.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-yellow)">
+                        <p class="font-bold text-[var(--ls-yellow)] uppercase text-xs mb-1">Ta Façon de Parler</p>
+                        <p>Un peu hésitant, tu as tendance à t'excuser ou à te justifier tout le temps.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-yellow)">
+                        <p class="font-bold text-[var(--ls-yellow)] uppercase text-xs mb-1">Le Résultat</p>
+                        <p>À force, tu te sens fatigué de 'subir' les autres et tu peux te laisser déborder.</p>
+                    </div>
+                    <p class="mt-6 text-xs italic text-slate-400"><b>Conseil LS4YOU :</b> Ce que tu veux est aussi important que ce que veulent les autres. Dire non poliment, c'est se respecter.</p>
+                `;
+            } else if (dominant === 'A') {
+                iconEl.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg bg-[var(--ls-red)] text-white";
+                iconEl.innerHTML = '<i data-lucide="zap" class="w-12 h-12"></i>';
+                titleEl.innerText = "Style Cash";
+                detailsEl.innerHTML = `
+                    <div class="result-card-detail" style="border-color: var(--ls-red)">
+                        <p class="font-bold text-[var(--ls-red)] uppercase text-xs mb-1">Ton Attitude</p>
+                        <p>Tu es très direct, mais parfois tu es un peu brutal et tu ne fais pas attention à l'autre.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-red)">
+                        <p class="font-bold text-[var(--ls-red)] uppercase text-xs mb-1">Ta Façon de Parler</p>
+                        <p>Ton ton est sec ou dur. On a parfois l'impression que tu attaques les gens.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-red)">
+                        <p class="font-bold text-[var(--ls-red)] uppercase text-xs mb-1">Le Résultat</p>
+                        <p>Ça crée des 'embrouilles' inutiles et ça peut te fermer des portes avec tes chefs ou tes potes.</p>
+                    </div>
+                    <p class="mt-6 text-xs italic text-slate-400"><b>Conseil LS4YOU :</b> Tu peux tout dire, mais c'est la manière qui compte. Rester calme te donne plus de pouvoir.</p>
+                `;
+            } else {
+                iconEl.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg bg-[var(--ls-turquoise)] text-white";
+                iconEl.innerHTML = '<i data-lucide="award" class="w-12 h-12"></i>';
+                titleEl.innerText = "Style Posé";
+                detailsEl.innerHTML = `
+                    <div class="result-card-detail" style="border-color: var(--ls-turquoise)">
+                        <p class="font-bold text-[var(--ls-turquoise)] uppercase text-xs mb-1">Ton Attitude</p>
+                        <p>Le juste équilibre. Tu dis ce que tu penses franchement mais avec respect.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-turquoise)">
+                        <p class="font-bold text-[var(--ls-turquoise)] uppercase text-xs mb-1">Ta Façon de Parler</p>
+                        <p>Calme, clair et sûr de toi. Tu es à l'aise sans avoir besoin d'écraser les autres.</p>
+                    </div>
+                    <div class="result-card-detail" style="border-color: var(--ls-turquoise)">
+                        <p class="font-bold text-[var(--ls-turquoise)] uppercase text-xs mb-1">Le Résultat</p>
+                        <p>Les gens te respectent et te comprennent mieux. C'est le style des vrais pros.</p>
+                    </div>
+                    <p class="mt-6 text-xs italic text-slate-400"><b>Conseil LS4YOU :</b> C'est ta force tranquille ! Continue comme ça, c'est ton meilleur atout.</p>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
